@@ -11,5 +11,6 @@ urlpatterns = [
     path('add/', views.addBlog, name='add_blog'),
     path('user_profile/', views.userProfile, name='user_profile'),
     path('user_profile/<slug:slug>/delete', views.deleteBlog, name='delete_blog'),
+    path('user_profile/<slug:slug>/update', views.updateBlog, name='update_blog'),
     path('<slug:slug>/', views.detail, name='post_detail')
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

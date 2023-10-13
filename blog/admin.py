@@ -11,7 +11,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ['title']
     prepopulated_fields = {'slug' : ('title',)}
 
+class UserAdmin(admin.ModelAdmin):
+    search_fields = ['username']
+    list_display = ['username', 'email', 'is_active', 'is_staff']
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Post, PostAdmin)
-admin.site.register(User)
+admin.site.register(User, UserAdmin)

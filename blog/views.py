@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse, redirect
-from .models import Category, Post, User, UserProfile
-from .forms import CustomUserCreationForm, UserLogIn, AddBlog
+from .models import Category, Post, User
+from .forms import UserLogIn, AddBlog, UserSignUp, UpdateBlog
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 
 # Create your views here.
 
 def registerUser(request):
     if request.method == 'POST':
-        form1 = CustomUserCreationForm(request.POST)
+        form1 = UserSignUp(request.POST)
 
         if form1.is_valid():
             user = form1.save(commit=True)
@@ -22,7 +22,7 @@ def registerUser(request):
             #     return HttpResponse(e)
 
     else:
-        form1 = CustomUserCreationForm()
+        form1 = UserSignUp()
     return render(request, 'register.html', {'form1' : form1})
 
 
@@ -32,18 +32,25 @@ def loginUser(request):
         print(request.POST)
 
         if form2.is_valid():
-            email_list = form2.cleaned_data['email']
-            
-            print(email_list)
+            username = form2.cleaned_data['username']
+            password = form2.cleaned_data['password']
+            print(username)
+            print(password)
+            user = authenticate(request, username = username, password = password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                return HttpResponse('Invalid Username or Password') 
 
-            try:
-                if(User.objects.filter(email = email_list)).exists():
-                    posts = Post.objects.all()
-                    return redirect('home')
-                else:
-                    return HttpResponse('You are not a registered user. Please Sign Up to continue.')
-            except:
-                return HttpResponse('error')
+            # try:
+            #     if(User.objects.filter(email = email_list)).exists():
+            #         posts = Post.objects.all()
+            #         return redirect('home')
+            #     else:
+            #         return HttpResponse('You are not a registered user. Please Sign Up to continue.')
+            # except:
+            #     return HttpResponse('error')
     else:
         form2 = UserLogIn()
     return render(request, 'login.html', {'form2' : form2})
@@ -61,7 +68,7 @@ def detail(request, slug):
 
 def addBlog(request):
     if request.method == 'POST':
-        form3 = AddBlog(request.POST)
+        form3 = AddBlog(request.POST, request.FILES)
 
         if form3.is_valid():
             form3.save()
@@ -102,7 +109,6 @@ def deleteBlog(request, slug):
     # post = get_object_or_404(Post, slug=slug)
     if posts.exists():
         post_to_delete = posts.first()
-        print('hello')
         print(request.user)
         print(post_to_delete.author)
 
@@ -112,3 +118,21 @@ def deleteBlog(request, slug):
         
 
     return HttpResponse('permission denied')
+
+
+def updateBlog(request, slug):
+    # posts = Post.objects.filter(slug=slug)
+    posts = get_object_or_404(Post, slug=slug)
+
+    if request.method == 'POST':
+        form4 = UpdateBlog(request.POST, instance=posts)
+
+        if form4.is_valid():
+            form4.save()
+            return redirect('user_profile')
+        
+
+    else:
+        form4 = UpdateBlog(instance=posts)
+
+    return render(request, 'updateblog.html', {'form4' : form4})

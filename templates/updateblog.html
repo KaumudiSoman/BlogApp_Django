@@ -11,12 +11,12 @@
   <body>
     {% block content %} <br>
         <div style="text-align: center">
-            <h1>Upload yout Blog here</h1>
+            <h1>Update yout Blog here</h1>
         </div>
         <br><br>
-        <form method='post' enctype="multipart/form-data" style='text-align: center'> 
+        <form method='post' style='text-align: center'> 
         {% csrf_token %}
-        {{form3.as_p}}
+        {{form4.as_p}}
         <input type='submit' value='Submit'>
         </form>
     {% endblock%}
