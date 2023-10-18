@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponse, redirect
 from .models import Category, Post, User
 from .forms import UserLogIn, AddBlog, UserSignUp, UpdateBlog
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 # Create your views here.
 
@@ -136,3 +136,8 @@ def updateBlog(request, slug):
         form4 = UpdateBlog(instance=posts)
 
     return render(request, 'updateblog.html', {'form4' : form4})
+
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')

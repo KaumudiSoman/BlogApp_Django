@@ -24,11 +24,16 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/user_profile/">My Profile</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link ml-auto active" aria-current="page" href="/logout/">Log Out</a>
+              </li>
             </ul>
             <form class="d-flex" role="search", method="get" action="{% url "search" %}">
               <input class="form-control me-2" name="query" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-light" type="submit">Search</button>
             </form>
+            
+          
           </div>
         </div>
       </nav>
