@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse, redirect
-from .models import Category, Post, User
-from .forms import UserLogIn, AddBlog, UserSignUp, UpdateBlog
+from .models import Category, Post, User, Comment
+from .forms import UserLogIn, AddBlog, UserSignUp, UpdateBlog, AddComment
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 
@@ -14,12 +14,6 @@ def registerUser(request):
             user = form1.save(commit=True)
             login(request, user)
             return redirect('home')
-
-            # try:
-            #     posts = Post.objects.all()
-            #     return redirect('home')
-            # except Exception as e :
-            #     return HttpResponse(e)
 
     else:
         form1 = UserSignUp()
@@ -43,14 +37,6 @@ def loginUser(request):
             else:
                 return HttpResponse('Invalid Username or Password') 
 
-            # try:
-            #     if(User.objects.filter(email = email_list)).exists():
-            #         posts = Post.objects.all()
-            #         return redirect('home')
-            #     else:
-            #         return HttpResponse('You are not a registered user. Please Sign Up to continue.')
-            # except:
-            #     return HttpResponse('error')
     else:
         form2 = UserLogIn()
     return render(request, 'login.html', {'form2' : form2})
@@ -63,7 +49,20 @@ def home(request):
 
 def detail(request, slug):
     post = get_object_or_404(Post, slug = slug)
-    return render(request, 'detail.html', {'post' : post})
+
+    if request.method == 'POST':
+        form4 = AddComment(request.POST)
+
+        if form4.is_valid():
+            comment = form4.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('post_detail', slug=slug)
+    
+    else:
+        form4 = AddComment()
+
+    return render(request, 'detail.html', {'post' : post, 'form4' : form4})
 
 
 def addBlog(request):
@@ -74,7 +73,6 @@ def addBlog(request):
             form3.save()
 
             try:
-                posts = Post.objects.all()
                 return redirect('home')
             except:
                 return HttpResponse('error')
@@ -106,7 +104,6 @@ def userProfile(request):
 
 def deleteBlog(request, slug):
     posts = Post.objects.filter(slug=slug)
-    # post = get_object_or_404(Post, slug=slug)
     if posts.exists():
         post_to_delete = posts.first()
         print(request.user)
@@ -121,7 +118,6 @@ def deleteBlog(request, slug):
 
 
 def updateBlog(request, slug):
-    # posts = Post.objects.filter(slug=slug)
     posts = get_object_or_404(Post, slug=slug)
 
     if request.method == 'POST':
@@ -141,3 +137,11 @@ def updateBlog(request, slug):
 def logoutUser(request):
     logout(request)
     return redirect('login')
+
+
+def likeCount(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+
+    post.likes_increment()
+
+    return redirect('post_detail', slug=slug)

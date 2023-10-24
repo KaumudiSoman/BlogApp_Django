@@ -23,7 +23,26 @@
                 <h6>by {{post.author}}</h6>
                 <strong><p>{{post.overview}}</p></strong>
                 <p>{{post.content}}</p>
-                {% comment %} <small>Category: {{post.categories}}</small> {% endcomment %}
+                <a href="{% url 'like_count' post.slug %}" class="btn btn-danger" >LIKE</a>
+                <strong>{{post.likes}} Likes</strong>
+            </div><br><br>
+            <hr><br>
+            <div>
+              <h5 style='margin-left: 200px'>Add Comment<h5><br>
+              <form method='post' enctype="multipart/form-data" style='margin-left: 200px'>
+                {% csrf_token %}
+                {{form4.as_p}}
+                <input type='submit' value='Submit'>
+              </form>
+            </div><br><br>
+            <hr><br>
+            <div style='margin-left: 200px'>
+              {% for comment in post.comments.all %}
+                <h10>{{comment.created_at}}</h10>
+                <h4>{{comment.name}}</h4>
+                <h10>{{comment.email}}</h10>
+                <strong><p>{{comment.body}}</p></strong>
+              {% endfor %}
             </div>
         </div>
     {% endblock%}

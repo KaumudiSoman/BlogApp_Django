@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Post, User
+from .models import Category, Post, User, Comment
 
 class PostAdmin(admin.ModelAdmin):
     search_fields = ['title', 'author']
@@ -19,3 +19,4 @@ class UserAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Comment)

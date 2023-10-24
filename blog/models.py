@@ -65,6 +65,22 @@ class Post(models.Model):
     thumbnail = models.ImageField(upload_to=get_upload_path, blank=True, null=True)
     categories = models.ManyToManyField(Category)
     featured = models.BooleanField()
+    likes = models.IntegerField(default=0)
+
+    def likes_increment(self):
+        self.likes += 1
+        self.save()
 
     def __str__(self):
         return self.title
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
